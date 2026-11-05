@@ -14,33 +14,45 @@ const occasions = [
 
 function CateringSection() {
   const videoRef = useRef<HTMLVideoElement>(null)
+  const formRef = useRef<HTMLDivElement>(null)
 
   const [isPlaying, setIsPlaying] = useState(true)
   const [isMuted, setIsMuted] = useState(true)
   const [volume, setVolume] = useState(1)
   const [progress, setProgress] = useState(0)
+  const [showForm, setShowForm] = useState(false)
+
+  const wasSubmitted =
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("catering") === "success"
+
+  const openForm = () => {
+    setShowForm(true)
+
+    window.setTimeout(() => {
+      formRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      })
+    }, 100)
+  }
 
   const togglePlay = () => {
-  const video = videoRef.current
+    const video = videoRef.current
+    if (!video) return
 
-  if (!video) return
-
-  if (video.paused) {
-    if (video.ended) {
-      video.currentTime = 0
+    if (video.paused) {
+      if (video.ended) video.currentTime = 0
+      void video.play()
+      setIsPlaying(true)
+    } else {
+      video.pause()
+      setIsPlaying(false)
     }
-
-    void video.play()
-    setIsPlaying(true)
-  } else {
-    video.pause()
-    setIsPlaying(false)
   }
-}
 
   const toggleMute = () => {
     const video = videoRef.current
-
     if (!video) return
 
     if (video.muted) {
@@ -60,25 +72,16 @@ function CateringSection() {
 
   const handleVolume = (value: number) => {
     const video = videoRef.current
-
     if (!video) return
 
     video.volume = value
-
-    if (value === 0) {
-      video.muted = true
-      setIsMuted(true)
-    } else {
-      video.muted = false
-      setIsMuted(false)
-    }
-
+    video.muted = value === 0
+    setIsMuted(value === 0)
     setVolume(value)
   }
 
   const handleProgress = (value: number) => {
     const video = videoRef.current
-
     if (!video || !video.duration) return
 
     video.currentTime = (value / 100) * video.duration
@@ -87,7 +90,6 @@ function CateringSection() {
 
   const handleTimeUpdate = () => {
     const video = videoRef.current
-
     if (!video || !video.duration) return
 
     setProgress((video.currentTime / video.duration) * 100)
@@ -95,7 +97,6 @@ function CateringSection() {
 
   const toggleFullscreen = () => {
     const video = videoRef.current
-
     if (!video) return
 
     if (document.fullscreenElement) {
@@ -112,7 +113,7 @@ function CateringSection() {
     >
       <div className="mx-auto max-w-7xl">
         <div className="grid overflow-hidden rounded-[2rem] bg-[#1A1A1A] md:grid-cols-2">
-          {/* 1. Catering video */}
+          {/* Catering video */}
           <motion.div
             initial={{ opacity: 0, scale: 1.03 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -121,25 +122,26 @@ function CateringSection() {
             className="group relative min-h-[420px] overflow-hidden sm:min-h-[500px] md:aspect-square md:min-h-0"
           >
             <video
-  ref={videoRef}
-  src={bakeryVideo}
-  autoPlay
-  muted
-  playsInline
-  preload="metadata"
-  onTimeUpdate={handleTimeUpdate}
-  onPlay={() => setIsPlaying(true)}
-  onPause={() => setIsPlaying(false)}
- onEnded={() => {
-  const video = videoRef.current
-  if (!video) return
+              ref={videoRef}
+              src={bakeryVideo}
+              autoPlay
+              muted
+              playsInline
+              preload="metadata"
+              onTimeUpdate={handleTimeUpdate}
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+              onEnded={() => {
+                const video = videoRef.current
+                if (!video) return
 
-  video.pause()
-  video.currentTime = 0
-  setIsPlaying(false)
-}}
-  className="absolute inset-0 h-full w-full object-cover"
-/>
+                video.pause()
+                video.currentTime = 0
+                setProgress(0)
+                setIsPlaying(false)
+              }}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
 
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
 
@@ -149,7 +151,6 @@ function CateringSection() {
               </span>
             </div>
 
-            {/* Video controls */}
             <div className="absolute inset-x-0 bottom-0 px-5 pb-5 sm:px-7 sm:pb-7">
               <input
                 type="range"
@@ -172,11 +173,7 @@ function CateringSection() {
                     aria-label={isPlaying ? "Pause video" : "Play video"}
                     className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-md transition hover:bg-white/25 active:scale-95"
                   >
-                    {isPlaying ? (
-                      <span className="text-sm font-bold">Ⅱ</span>
-                    ) : (
-                      <span className="ml-0.5 text-sm">▶</span>
-                    )}
+                    {isPlaying ? "Ⅱ" : "▶"}
                   </button>
 
                   <button
@@ -214,7 +211,7 @@ function CateringSection() {
             </div>
           </motion.div>
 
-          {/* 2. Catering content */}
+          {/* Catering content */}
           <div className="flex min-h-[500px] flex-col justify-center px-7 py-12 sm:px-10 sm:py-14 lg:px-14 md:aspect-square md:min-h-0 md:py-10">
             <motion.div
               initial={{ opacity: 0, x: 24 }}
@@ -245,10 +242,7 @@ function CateringSection() {
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{
-                      duration: 0.4,
-                      delay: index * 0.05,
-                    }}
+                    transition={{ duration: 0.4, delay: index * 0.05 }}
                     className="flex items-center gap-2 sm:gap-3"
                   >
                     <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#31929B]" />
@@ -259,19 +253,20 @@ function CateringSection() {
                 ))}
               </div>
 
-              <a
-  href="mailto:damascus.restaurant1@gmail.com?subject=Catering%20Request"
+              <button
+                type="button"
+                onClick={openForm}
                 className="group mt-8 inline-flex items-center gap-3 rounded-full bg-[#31929B] px-6 py-3.5 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#287D85] sm:mt-9 sm:px-7"
               >
                 Request Catering
                 <span className="transition-transform duration-300 group-hover:translate-x-1">
                   →
                 </span>
-              </a>
+              </button>
             </motion.div>
           </div>
 
-          {/* 3. Food truck content */}
+          {/* Food truck content */}
           <div className="flex min-h-[420px] flex-col justify-center bg-[#1A1A1A] px-7 py-12 sm:px-10 sm:py-14 lg:px-14 md:aspect-square md:min-h-0 md:py-10">
             <motion.div
               initial={{ opacity: 0, x: -24 }}
@@ -279,39 +274,41 @@ function CateringSection() {
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.65 }}
             >
-             <p className="font-heading text-[10px] font-bold uppercase tracking-[0.3em] text-[#31929B] sm:text-xs">
-  Damascus food truck
-</p>
+              <p className="font-heading text-[10px] font-bold uppercase tracking-[0.3em] text-[#31929B] sm:text-xs">
+                Damascus food truck
+              </p>
 
-<h3 className="mt-5 font-display text-4xl font-semibold leading-[1.05] tracking-[-0.03em] text-white sm:text-5xl lg:text-6xl">
-  Savoury favourites.
-  <br />
-  <span className="text-[#31929B]">Sweet treats.</span>
-</h3>
+              <h3 className="mt-5 font-display text-4xl font-semibold leading-[1.05] tracking-[-0.03em] text-white sm:text-5xl lg:text-6xl">
+                Savoury favourites.
+                <br />
+                <span className="text-[#31929B]">Sweet treats.</span>
+              </h3>
 
-<p className="mt-6 max-w-lg text-sm leading-7 text-white/55 sm:text-base sm:leading-8">
-  Come hungry and enjoy your Damascus food truck favourites, along with
-  delicious specialty sweets from Sweets on the Go!
-</p>
+              <p className="mt-6 max-w-lg text-sm leading-7 text-white/55 sm:text-base sm:leading-8">
+                Come hungry and enjoy your Damascus food truck favourites,
+                along with delicious specialty sweets from Sweets on the Go!
+              </p>
 
-<p className="mt-4 text-sm leading-6 text-white/45 sm:text-base">
-  From savoury bites to sweet treats, there’s something for everyone.
-  <span aria-hidden="true"> 🍔🍟🍫🍓</span>
-</p>
+              <p className="mt-4 text-sm leading-6 text-white/45 sm:text-base">
+                From savoury bites to sweet treats, there’s something for
+                everyone.
+                <span aria-hidden="true"> 🍔🍟🍫🍓</span>
+              </p>
 
-<a
-  href="mailto:damascus.restaurant1@gmail.com?subject=Catering%20Request"
-  className="group mt-8 inline-flex items-center gap-3 rounded-full bg-[#31929B] px-6 py-3.5 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#287D85] sm:mt-9 sm:px-7"
->
-  Plan your event
-  <span className="transition-transform duration-300 group-hover:translate-x-1">
-    →
-  </span>
-</a>
+              <button
+                type="button"
+                onClick={openForm}
+                className="group mt-8 inline-flex items-center gap-3 rounded-full bg-[#31929B] px-6 py-3.5 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#287D85] sm:mt-9 sm:px-7"
+              >
+                Plan your event
+                <span className="transition-transform duration-300 group-hover:translate-x-1">
+                  →
+                </span>
+              </button>
             </motion.div>
           </div>
 
-          {/* 4. Food truck photo */}
+          {/* Food truck photo */}
           <motion.div
             initial={{ opacity: 0, scale: 1.03 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -335,6 +332,177 @@ function CateringSection() {
               </p>
             </div>
           </motion.div>
+        </div>
+
+        {/* Catering request form */}
+        <div
+          ref={formRef}
+          className={`scroll-mt-8 transition-all duration-500 ${
+            showForm ? "mt-8 opacity-100" : "hidden"
+          }`}
+        >
+          <div className="rounded-[2rem] bg-[#1A1A1A] p-6 sm:p-10 lg:p-12">
+            <div className="mb-8 flex items-start justify-between gap-4">
+              <div>
+                <p className="font-heading text-[10px] font-bold uppercase tracking-[0.3em] text-[#31929B] sm:text-xs">
+                  Tell us about your event
+                </p>
+                <h3 className="mt-3 font-display text-3xl font-semibold text-white sm:text-4xl">
+                  Catering request
+                </h3>
+                <p className="mt-3 max-w-xl text-sm leading-6 text-white/55">
+                  Share a few details and the Damascus team will get back to
+                  you.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowForm(false)}
+                aria-label="Close catering form"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-xl text-white transition hover:bg-white/20"
+              >
+                ×
+              </button>
+            </div>
+
+            {wasSubmitted ? (
+              <div
+                role="status"
+                className="rounded-2xl border border-[#31929B]/40 bg-[#31929B]/10 p-6 text-white"
+              >
+                <p className="font-semibold">Thanks for your request!</p>
+                <p className="mt-2 text-sm text-white/65">
+                  Your message has been sent. The Damascus team will be in
+                  touch.
+                </p>
+              </div>
+            ) : (
+              <form
+                name="catering-request"
+                method="POST"
+                action="/?catering=success"
+                data-netlify="true"
+                netlify-honeypot="bot-field"
+                className="grid gap-5 sm:grid-cols-2"
+              >
+                <input
+                  type="hidden"
+                  name="form-name"
+                  value="catering-request"
+                />
+
+                <p className="hidden">
+                  <label>
+                    Leave this field empty:
+                    <input name="bot-field" />
+                  </label>
+                </p>
+
+                <label className="grid gap-2 text-sm text-white/75">
+                  Your name *
+                  <input
+                    required
+                    name="name"
+                    autoComplete="name"
+                    className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-[#31929B]"
+                    placeholder="Full name"
+                  />
+                </label>
+
+                <label className="grid gap-2 text-sm text-white/75">
+                  Email *
+                  <input
+                    required
+                    type="email"
+                    name="email"
+                    autoComplete="email"
+                    className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-[#31929B]"
+                    placeholder="you@example.com"
+                  />
+                </label>
+
+                <label className="grid gap-2 text-sm text-white/75">
+                  Phone *
+                  <input
+                    required
+                    type="tel"
+                    name="phone"
+                    autoComplete="tel"
+                    className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-[#31929B]"
+                    placeholder="Your phone number"
+                  />
+                </label>
+
+                <label className="grid gap-2 text-sm text-white/75">
+                  Event date
+                  <input
+                    type="date"
+                    name="event-date"
+                    className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition focus:border-[#31929B]"
+                  />
+                </label>
+
+                <label className="grid gap-2 text-sm text-white/75">
+                  Number of guests
+                  <input
+                    type="number"
+                    name="guest-count"
+                    min="1"
+                    className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-[#31929B]"
+                    placeholder="Approximate number"
+                  />
+                </label>
+
+                <label className="grid gap-2 text-sm text-white/75">
+                  Event type
+                  <select
+                    name="event-type"
+                    defaultValue=""
+                    className="rounded-xl border border-white/10 bg-[#222222] px-4 py-3 text-white outline-none transition focus:border-[#31929B]"
+                  >
+                    <option value="" disabled>
+                      Select an event type
+                    </option>
+                    {occasions.map((occasion) => (
+                      <option key={occasion} value={occasion}>
+                        {occasion}
+                      </option>
+                    ))}
+                    <option value="Food truck event">
+                      Food truck event
+                    </option>
+                    <option value="Other">Other</option>
+                  </select>
+                </label>
+
+                <label className="grid gap-2 text-sm text-white/75 sm:col-span-2">
+                  Event details
+                  <textarea
+                    name="details"
+                    rows={4}
+                    className="resize-y rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-[#31929B]"
+                    placeholder="Tell us about your event, menu needs, or questions."
+                  />
+                </label>
+
+                <div className="sm:col-span-2">
+                  <button
+                    type="submit"
+                    className="group inline-flex items-center gap-3 rounded-full bg-[#31929B] px-7 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#287D85]"
+                  >
+                    Send catering request
+                    <span className="transition-transform group-hover:translate-x-1">
+                      →
+                    </span>
+                  </button>
+                  <p className="mt-3 text-xs text-white/40">
+                    Your details will only be used to respond to your request.
+                  </p>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
       </div>
     </section>

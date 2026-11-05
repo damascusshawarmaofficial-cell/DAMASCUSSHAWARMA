@@ -1,29 +1,31 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
+<body>
+  <div id="root"></div>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Hidden form definition for Netlify -->
+  <form
+    name="catering-request"
+    method="POST"
+    data-netlify="true"
+    netlify-honeypot="bot-field"
+    hidden
+  >
+    <input type="hidden" name="form-name" value="catering-request" />
 
-<link
-  href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap"
-  rel="stylesheet"
-/>
+    <p>
+      <label>
+        Leave this field empty:
+        <input name="bot-field" />
+      </label>
+    </p>
 
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <input name="name" />
+    <input name="email" />
+    <input name="phone" />
+    <input name="event-date" />
+    <input name="guest-count" />
+    <input name="event-type" />
+    <textarea name="details"></textarea>
+  </form>
 
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
-
-    <title>Damascus Shawarma</title>
-  </head>
-
-  <body>
-    <div id="root"></div>
-
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
