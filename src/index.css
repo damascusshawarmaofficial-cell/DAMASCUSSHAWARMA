@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+:root {
+  --font-display: "Barlow Condensed", sans-serif;
+  --font-heading: "DM Sans", sans-serif;
+  --font-body: "Manrope", sans-serif;
+
+  --damascus-teal: #087f87;
+  --damascus-accent: #31929b;
+  --damascus-black: #111111;
+  --damascus-off-white: #fafaf8;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--damascus-black);
+  color: var(--damascus-black);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+}
+
+button,
+a {
+  font-family: var(--font-heading);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
