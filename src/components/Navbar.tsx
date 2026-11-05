@@ -91,7 +91,7 @@ function Navbar() {
               className="relative"
             >
               <img
-                src="/public/logo.jpg"
+                src="/logo.jpg"
                 alt="Damascus Shawarma"
                 className="
                   h-[58px]
