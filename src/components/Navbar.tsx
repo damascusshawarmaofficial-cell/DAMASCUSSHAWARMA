@@ -3,43 +3,43 @@ import { AnimatePresence, motion } from "motion/react"
 
 function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [visible, setVisible] = useState(true)
+  // const [visible, setVisible] = useState(true)
 
-  const lastScrollY = useRef(0)
+  // const lastScrollY = useRef(0)
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     const currentScrollY = window.scrollY
 
-      // Always show navbar at the very top
-      if (currentScrollY < 80) {
-        setVisible(true)
-        lastScrollY.current = currentScrollY
-        return
-      }
+  //     // Always show navbar at the very top
+  //     if (currentScrollY < 80) {
+  //       setVisible(true)
+  //       lastScrollY.current = currentScrollY
+  //       return
+  //     }
 
-      // Scrolling down → hide
-      if (currentScrollY > lastScrollY.current) {
-        setVisible(false)
-        setMobileOpen(false)
-      }
+  //     // Scrolling down → hide
+  //     if (currentScrollY > lastScrollY.current) {
+  //       setVisible(false)
+  //       setMobileOpen(false)
+  //     }
 
-      // Scrolling up → show
-      else if (currentScrollY < lastScrollY.current) {
-        setVisible(true)
-      }
+  //     // Scrolling up → show
+  //     else if (currentScrollY < lastScrollY.current) {
+  //       setVisible(true)
+  //     }
 
-      lastScrollY.current = currentScrollY
-    }
+  //     lastScrollY.current = currentScrollY
+  //   }
 
-    window.addEventListener("scroll", handleScroll, {
-      passive: true,
-    })
+  //   window.addEventListener("scroll", handleScroll, {
+  //     passive: true,
+  //   })
 
-    return () => {
-      window.removeEventListener("scroll", handleScroll)
-    }
-  }, [])
+  //   return () => {
+  //     window.removeEventListener("scroll", handleScroll)
+  //   }
+  // }, [])
 
   return (
     <motion.header

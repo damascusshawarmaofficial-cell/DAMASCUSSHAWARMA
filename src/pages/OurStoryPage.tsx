@@ -7,8 +7,6 @@ import image9 from "../assets/9.jpeg";
 import image10 from "../assets/10.jpg";
 import image11 from "../assets/11.jpeg";
 import image12 from "../assets/12.jpeg";
-import image13 from "../assets/13.jpg";
-import image14 from "../assets/14.jpg";
 import image15 from "../assets/15.jpg";
 
 // ANIMATIONS

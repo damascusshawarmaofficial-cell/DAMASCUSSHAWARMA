@@ -13,9 +13,7 @@ function SignatureSection() {
           transition={{ duration: 0.6 }}
           className="text-center"
         >
-          {/* <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#31929B]">
-            The Signature
-          </p> */}
+
 
           <h2 className="mt-5 text-5xl font-semibold tracking-[-0.04em] text-[#111111] sm:text-6xl lg:text-8xl">
             Garlic Sauce.
@@ -76,63 +74,8 @@ function SignatureSection() {
           </motion.div>
 
         </div>
-
-        {/* Bottom features */}
-        {/* <div className="mx-auto mt-20 grid max-w-4xl gap-8 border-t border-black/10 pt-10 sm:grid-cols-3">
-
-          <Feature
-            number="01"
-            title="Creamy"
-            text="Smooth and rich."
-          />
-
-          <Feature
-            number="02"
-            title="Fresh"
-            text="Prepared with care."
-          />
-
-          <Feature
-            number="03"
-            title="Full of flavour"
-            text="Made for shawarma."
-          />
-
-        </div> */}
       </div>
     </section>
-  )
-}
-
-type FeatureProps = {
-  number: string
-  title: string
-  text: string
-}
-
-function Feature({ number, title, text }: FeatureProps) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
-      className="flex gap-4"
-    >
-      <span className="text-xs font-semibold text-[#31929B]">
-        {number}
-      </span>
-
-      <div>
-        <h3 className="font-semibold text-[#111111]">
-          {title}
-        </h3>
-
-        <p className="mt-1 text-sm text-black/45">
-          {text}
-        </p>
-      </div>
-    </motion.div>
   )
 }
 
