@@ -1,5 +1,5 @@
 import { motion } from "motion/react"
-import garlicImage from "../assets/food/Menu/garlic.png";
+import garlicImage from "../assets/food/Menu/garlic.PNG";
 function SignatureSection() {
   return (
     <section className="relative overflow-hidden bg-[#F3F8F8] px-6 py-24 sm:py-32 lg:px-8">
