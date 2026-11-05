@@ -10,17 +10,22 @@ function FoodVideoSection() {
   // Replace this later with the real Damascus video.
 
   const toggleVideo = () => {
-    if (!videoRef.current) return
+  const video = videoRef.current
 
-    if (videoRef.current.paused) {
-      videoRef.current.play()
-      setPaused(false)
-    } else {
-      videoRef.current.pause()
-      setPaused(true)
+  if (!video) return
+
+  if (video.paused) {
+    if (video.ended) {
+      video.currentTime = 0
     }
-  }
 
+    void video.play()
+    setPaused(false)
+  } else {
+    video.pause()
+    setPaused(true)
+  }
+}
   const toggleMute = () => {
     if (!videoRef.current) return
 
@@ -110,24 +115,32 @@ function FoodVideoSection() {
 
           {/* Video */}
 
-          <video
-            ref={videoRef}
-            src={bakeryVideo}
-            autoPlay
-            muted={muted}
-            loop
-            playsInline
-            className="
-              aspect-[16/9]
-              h-full
-              w-full
-              object-cover
-              transition-transform
-              duration-1000
-              hover:scale-[1.025]
-            "
-          />
+         <video
+  ref={videoRef}
+  src={bakeryVideo}
+  autoPlay
+  muted={muted}
+  playsInline
+  onPlay={() => setPaused(false)}
+  onPause={() => setPaused(true)}
+  onEnded={() => {
+    const video = videoRef.current
+    if (!video) return
 
+    video.pause()
+    video.currentTime = 0
+    setPaused(true)
+  }}
+  className="
+    aspect-[16/9]
+    h-full
+    w-full
+    object-cover
+    transition-transform
+    duration-1000
+    hover:scale-[1.025]
+  "
+/>
           {/* Dark gradient */}
 
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 via-black/5 to-black/20" />

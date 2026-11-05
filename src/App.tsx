@@ -13,6 +13,7 @@ import FoodVideoSection from "./components/FoodVideoSection"
 import OrderSection from "./components/OrderSection"
 
 import OurStoryPage from "./pages/OurStoryPage"
+import StrawberryCupSection from "./components/StrawberryCupSection"
 
 function HomePage() {
   return (
@@ -39,6 +40,7 @@ function HomePage() {
         <CateringSection />
 
         <GallerySection />
+        <StrawberryCupSection />
 
         {/* <LocationSection /> */}
 

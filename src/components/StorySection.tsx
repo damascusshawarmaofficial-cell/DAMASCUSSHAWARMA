@@ -13,22 +13,30 @@ function StorySection() {
   // =========================================
 
   const toggleVideo = () => {
-    if (!videoRef.current) return
+    const video = videoRef.current
 
-    if (videoRef.current.paused) {
-      videoRef.current.play()
+    if (!video) return
+
+    if (video.paused) {
+      if (video.ended) {
+        video.currentTime = 0
+      }
+
+      void video.play()
       setPaused(false)
     } else {
-      videoRef.current.pause()
+      video.pause()
       setPaused(true)
     }
   }
 
   const toggleMute = () => {
-    if (!videoRef.current) return
+    const video = videoRef.current
 
-    videoRef.current.muted = !videoRef.current.muted
-    setMuted(videoRef.current.muted)
+    if (!video) return
+
+    video.muted = !video.muted
+    setMuted(video.muted)
   }
 
   return (
@@ -45,7 +53,6 @@ function StorySection() {
       "
     >
       <div className="mx-auto max-w-[1400px]">
-
         {/* ========================================= */}
         {/* MAIN GRID */}
         {/* ========================================= */}
@@ -59,7 +66,6 @@ function StorySection() {
             lg:gap-24
           "
         >
-
           {/* ========================================= */}
           {/* VIDEO */}
           {/* ========================================= */}
@@ -82,7 +88,6 @@ function StorySection() {
             }}
             className="relative mx-auto w-full max-w-[620px]"
           >
-
             {/* ========================================= */}
             {/* VIDEO FRAME */}
             {/* ========================================= */}
@@ -97,18 +102,20 @@ function StorySection() {
                 sm:rounded-[3rem]
               "
             >
-
               {/* Portrait video container */}
 
               <div className="relative aspect-[4/5] w-full">
-
                 <video
                   ref={videoRef}
                   src={damascus}
                   autoPlay
                   muted={muted}
-                  loop
                   playsInline
+                  onPlay={() => setPaused(false)}
+                  onEnded={() => {
+                    videoRef.current?.pause()
+                    setPaused(true)
+                  }}
                   className="
                     h-full
                     w-full
@@ -146,7 +153,6 @@ function StorySection() {
                     sm:top-8
                   "
                 >
-
                   <div
                     className="
                       rounded-full
@@ -171,7 +177,6 @@ function StorySection() {
                       Our Story
                     </span>
                   </div>
-
                 </div>
 
                 {/* ===================================== */}
@@ -190,17 +195,12 @@ function StorySection() {
                     sm:right-8
                   "
                 >
-
                   {/* PLAY / PAUSE */}
 
                   <button
                     type="button"
                     onClick={toggleVideo}
-                    aria-label={
-                      paused
-                        ? "Play video"
-                        : "Pause video"
-                    }
+                    aria-label={paused ? "Play video" : "Pause video"}
                     className="
                       flex
                       h-12
@@ -217,13 +217,9 @@ function StorySection() {
                     "
                   >
                     {paused ? (
-                      <span className="ml-0.5 text-base">
-                        ▶
-                      </span>
+                      <span className="ml-0.5 text-base">▶</span>
                     ) : (
-                      <span className="text-xs tracking-[-2px]">
-                        ❚❚
-                      </span>
+                      <span className="text-xs tracking-[-2px]">❚❚</span>
                     )}
                   </button>
 
@@ -232,11 +228,7 @@ function StorySection() {
                   <button
                     type="button"
                     onClick={toggleMute}
-                    aria-label={
-                      muted
-                        ? "Unmute video"
-                        : "Mute video"
-                    }
+                    aria-label={muted ? "Unmute video" : "Mute video"}
                     className="
                       flex
                       h-12
@@ -259,9 +251,7 @@ function StorySection() {
                   >
                     {muted ? "🔇" : "🔊"}
                   </button>
-
                 </div>
-
               </div>
             </div>
 
@@ -285,7 +275,6 @@ function StorySection() {
                 lg:-left-8
               "
             >
-
               <p
                 className="
                   text-3xl
@@ -308,9 +297,7 @@ function StorySection() {
               >
                 Damascus
               </p>
-
             </div>
-
           </motion.div>
 
           {/* ========================================= */}
@@ -336,13 +323,11 @@ function StorySection() {
             }}
             className="lg:pr-8"
           >
-
             {/* ========================================= */}
             {/* LABEL */}
             {/* ========================================= */}
 
             <div className="flex items-center gap-3">
-
               <span className="h-2 w-2 rounded-full bg-[#31929B]" />
 
               <p
@@ -356,7 +341,6 @@ function StorySection() {
               >
                 Our Story
               </p>
-
             </div>
 
             {/* ========================================= */}
@@ -378,9 +362,7 @@ function StorySection() {
               From Damascus
               <br />
 
-              <span className="text-[#31929B]">
-                to Sudbury.
-              </span>
+              <span className="text-[#31929B]">to Sudbury.</span>
             </h2>
 
             {/* ========================================= */}
@@ -397,26 +379,21 @@ function StorySection() {
                 text-white/55
               "
             >
-
               <p>
-                Damascus Shawarma brings the flavours and
-                traditions of Syrian cuisine to the heart
-                of Sudbury.
+                Damascus Shawarma brings the flavours and traditions of Syrian
+                cuisine to the heart of Sudbury.
               </p>
 
               <p>
-                From carefully seasoned shawarma to fresh
-                vegetables, sauces and warm pita, every
-                dish is prepared with the flavours we grew
-                up with and love to share.
+                From carefully seasoned shawarma to fresh vegetables, sauces
+                and warm pita, every dish is prepared with the flavours we
+                grew up with and love to share.
               </p>
 
               <p>
-                Simple ingredients, authentic recipes and
-                food made with care — that's what makes
-                Damascus, Damascus.
+                Simple ingredients, authentic recipes and food made with care —
+                that's what makes Damascus, Damascus.
               </p>
-
             </div>
 
             {/* ========================================= */}
@@ -424,41 +401,39 @@ function StorySection() {
             {/* ========================================= */}
 
             <div className="mt-10">
+              <a
+                href="/our-story"
+                className="
+                  group
+                  inline-flex
+                  items-center
+                  gap-3
+                  rounded-full
+                  border
+                  border-white/20
+                  px-7
+                  py-3.5
+                  text-sm
+                  font-semibold
+                  text-white
+                  transition-all
+                  duration-300
+                  hover:border-[#31929B]
+                  hover:bg-[#31929B]
+                "
+              >
+                Discover Our Story
 
-  <a
-    href="/our-story"
-    className="
-      group
-      inline-flex
-      items-center
-      gap-3
-      rounded-full
-      border
-      border-white/20
-      px-7
-      py-3.5
-      text-sm
-      font-semibold
-      text-white
-      transition-all
-      duration-300
-      hover:border-[#31929B]
-      hover:bg-[#31929B]
-    "
-  >
-    Discover Our Story
-
-    <span
-      className="
-        transition-transform
-        duration-300
-        group-hover:translate-x-1
-      "
-    >
-      →
-    </span>
-  </a>
-
+                <span
+                  className="
+                    transition-transform
+                    duration-300
+                    group-hover:translate-x-1
+                  "
+                >
+                  →
+                </span>
+              </a>
             </div>
 
             {/* ========================================= */}
@@ -477,7 +452,6 @@ function StorySection() {
                 pt-8
               "
             >
-
               <div>
                 <p className="text-sm font-semibold text-white">
                   Authentic
@@ -497,11 +471,8 @@ function StorySection() {
                   Every day
                 </p>
               </div>
-
             </div>
-
           </motion.div>
-
         </div>
       </div>
     </section>
