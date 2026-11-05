@@ -1,611 +1,417 @@
-import { useEffect, useRef, useState } from "react"
-import { motion } from "motion/react"
 
-const heroVideos = [
-  {
-    src: "/videos/hero/shawarma-spit.mp4",
-    label: "THE SHAWARMA",
-  },
-  {
-    src: "/videos/hero/preparing-shawarma.mp4",
-    label: "MADE FRESH",
-  },
-  {
-    src: "/videos/hero/chicken-shawarma.mp4",
-    label: "CHICKEN SHAWARMA",
-  },
-  {
-    src: "/videos/hero/wrap-preparation.mp4",
-    label: "FRESHLY WRAPPED",
-  },
-  {
-    src: "/videos/hero/fresh-ingredients.mp4",
-    label: "FRESH INGREDIENTS",
-  },
-  {
-    src: "/videos/hero/finished-food.mp4",
-    label: "DAMASCUS · SUDBURY",
-  },
-]
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
-const VIDEO_DURATION = 5000
+import videoA from "../assets/videos/a.mp4";
+import videoB from "../assets/videos/b.mp4";
+import videoC from "../assets/videos/c.mp4";
+import videoD from "../assets/videos/d.mp4";
 
-function Hero() {
-  const [activeVideo, setActiveVideo] = useState(0)
+type MediaItem = {
+  src: string;
+};
 
-  const videoRefs = useRef<(HTMLVideoElement | null)[]>([])
+const mediaItems: MediaItem[] = [
+  { src: videoA },
+  { src: videoB },
+  { src: videoC },
+  { src: videoD },
+];
 
-  /*
-   * Change hero video automatically
-   */
+const leftBackgroundImage =
+  "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1600&q=85";
+
+const rightBackgroundImage =
+  "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=1600&q=85";
+
+export default function LivingHero() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const desktopVideoRef = useRef<HTMLVideoElement | null>(null);
+  const mobileVideoRef = useRef<HTMLVideoElement | null>(null);
+
+  const activeVideo = mediaItems[activeIndex];
+
+  const nextVideo = () => {
+    setActiveIndex((current) => (current + 1) % mediaItems.length);
+  };
+
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setActiveVideo((current) => (current + 1) % heroVideos.length)
-    }, VIDEO_DURATION)
+    const videos = [
+      desktopVideoRef.current,
+      mobileVideoRef.current,
+    ];
 
-    return () => window.clearTimeout(timer)
-  }, [activeVideo])
+    videos.forEach((video) => {
+      if (!video) return;
 
-  /*
-   * Start the active video
-   */
-  useEffect(() => {
-    const video = videoRefs.current[activeVideo]
+      video.currentTime = 0;
 
-    if (!video) return
-
-    video.currentTime = 0
-
-    video.play().catch(() => {
-      // Browser may prevent autoplay until interaction.
-    })
-  }, [activeVideo])
+      video.play().catch(() => {
+        // Autoplay may be restricted by the browser.
+      });
+    });
+  }, [activeIndex]);
 
   return (
     <section
       id="home"
-      className="
-        relative
-        flex
-        min-h-screen
-        items-center
-        overflow-hidden
-        bg-[#111111]
-      "
+      className="relative isolate overflow-hidden bg-[#111111] text-white"
     >
+      {/* =========================================
+          DESKTOP HERO
+      ========================================= */}
 
-      {/* ================================================= */}
-      {/* BACKGROUND VIDEOS */}
-      {/* ================================================= */}
+      <div className="relative hidden min-h-[calc(100svh-78px)] overflow-hidden lg:block">
 
-      <div className="absolute inset-0">
+        {/* LEFT BACKGROUND IMAGE */}
 
-        {heroVideos.map((video, index) => (
-          <video
-            key={video.src}
-            ref={(element) => {
-              videoRefs.current[index] = element
-            }}
-            src={video.src}
-            muted
-            loop
-            playsInline
-            preload={index === 0 ? "auto" : "metadata"}
-            className={`
-              absolute
-              inset-0
-              h-full
-              w-full
-              object-cover
-              object-center
-              transition-opacity
-              duration-[1200ms]
-              ease-in-out
-
-              ${
-                activeVideo === index
-                  ? "z-10 opacity-100"
-                  : "z-0 opacity-0"
-              }
-            `}
+        <div className="absolute inset-0">
+          <img
+            src={leftBackgroundImage}
+            alt=""
+            className="absolute inset-y-0 left-0 h-full w-[40%] object-cover"
           />
-        ))}
 
-      </div>
+          <img
+            src={rightBackgroundImage}
+            alt=""
+            className="absolute inset-y-0 right-0 h-full w-[40%] object-cover"
+          />
 
-      {/* ================================================= */}
-      {/* CINEMATIC OVERLAY */}
-      {/* ================================================= */}
+          <div className="absolute inset-y-0 left-0 w-[45%] bg-gradient-to-r from-black/85 via-black/65 to-black" />
 
-      {/* General darkening */}
-      <div className="
-        absolute
-        inset-0
-        z-20
-        bg-black/30
-      " />
+          <div className="absolute inset-y-0 right-0 w-[45%] bg-gradient-to-l from-black/80 via-black/60 to-black" />
 
-      {/* Stronger left side for typography */}
-      <div className="
-        absolute
-        inset-0
-        z-20
-        bg-gradient-to-r
-        from-black/90
-        via-black/65
-        to-black/10
-      " />
-
-      {/* Bottom fade */}
-      <div className="
-        absolute
-        inset-x-0
-        bottom-0
-        z-20
-        h-[35%]
-        bg-gradient-to-t
-        from-black/75
-        to-transparent
-      " />
-
-      {/* Top fade */}
-      <div className="
-        absolute
-        inset-x-0
-        top-0
-        z-20
-        h-32
-        bg-gradient-to-b
-        from-black/50
-        to-transparent
-      " />
-
-      {/* ================================================= */}
-      {/* HERO CONTENT */}
-      {/* ================================================= */}
-
-      <div className="
-        relative
-        z-30
-        mx-auto
-        w-full
-        max-w-7xl
-        px-6
-        pb-24
-        pt-28
-        lg:px-8
-      ">
-
-        <div className="max-w-5xl">
-
-          {/* ================================================= */}
-          {/* VIDEO LABEL */}
-          {/* ================================================= */}
-
-          <motion.div
-            key={`label-${activeVideo}`}
-            initial={{
-              opacity: 0,
-              y: 12,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.5,
-            }}
-            className="
-              mb-5
-              flex
-              items-center
-              gap-3
-            "
-          >
-
-            <span className="
-              h-2
-              w-2
-              rounded-full
-              bg-[#31929B]
-              shadow-[0_0_16px_rgba(49,146,155,0.9)]
-            " />
-
-            <span className="
-              text-[10px]
-              font-bold
-              uppercase
-              tracking-[0.35em]
-              text-white/75
-              sm:text-xs
-            ">
-              {heroVideos[activeVideo].label}
-            </span>
-
-          </motion.div>
-
-          {/* ================================================= */}
-          {/* MAIN BRAND STATEMENT */}
-          {/* ================================================= */}
-
-          <motion.h1
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.8,
-              delay: 0.1,
-            }}
-            className="
-              font-black
-              uppercase
-              leading-[0.82]
-              tracking-[-0.045em]
-            "
-          >
-
-            {/* Small first line */}
-
-            <span className="
-              block
-              max-w-3xl
-              text-[clamp(1rem,2.1vw,2rem)]
-              tracking-[0.08em]
-              text-[#F2EEE4]
-            ">
-              THE ONLY THING BETTER THAN
-            </span>
-
-            {/* Main word */}
-
-            <span className="
-              mt-3
-              block
-              text-[clamp(4rem,10vw,9.5rem)]
-              text-[#31929B]
-              drop-shadow-[0_10px_35px_rgba(0,0,0,0.35)]
-            ">
-              SHAWARMA
-            </span>
-
-            {/* IS MORE */}
-
-            <span className="
-              mt-2
-              block
-              text-[clamp(2.7rem,6vw,6rem)]
-              text-[#F2EEE4]
-            ">
-              IS MORE
-            </span>
-
-            {/* Final SHAWARMA */}
-
-            <span className="
-              block
-              text-[clamp(4rem,10vw,9.5rem)]
-              text-[#F2EEE4]
-              drop-shadow-[0_10px_35px_rgba(0,0,0,0.35)]
-            ">
-              SHAWARMA
-              <span className="text-[#31929B]">
-                .
-              </span>
-            </span>
-
-          </motion.h1>
-
-          {/* ================================================= */}
-          {/* DESCRIPTION */}
-          {/* ================================================= */}
-
-          <motion.p
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.6,
-              delay: 0.3,
-            }}
-            className="
-              mt-7
-              max-w-xl
-              text-base
-              leading-7
-              text-white/75
-              sm:text-lg
-            "
-          >
-            Authentic Syrian flavours, freshly prepared
-            and served with care in Sudbury.
-          </motion.p>
-
-          {/* ================================================= */}
-          {/* BADGES */}
-          {/* ================================================= */}
-
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 15,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.5,
-              delay: 0.4,
-            }}
-            className="
-              mt-5
-              flex
-              flex-wrap
-              gap-2
-            "
-          >
-
-            <span className="
-              rounded-full
-              border
-              border-white/20
-              bg-black/30
-              px-4
-              py-2
-              text-[9px]
-              font-bold
-              uppercase
-              tracking-[0.2em]
-              text-white
-              backdrop-blur-md
-            ">
-              ✓ 100% Halal
-            </span>
-
-            <span className="
-              rounded-full
-              border
-              border-white/20
-              bg-black/30
-              px-4
-              py-2
-              text-[9px]
-              font-bold
-              uppercase
-              tracking-[0.2em]
-              text-white/75
-              backdrop-blur-md
-            ">
-              Freshly Prepared
-            </span>
-
-          </motion.div>
-
-          {/* ================================================= */}
-          {/* BUTTONS */}
-          {/* ================================================= */}
-
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.6,
-              delay: 0.5,
-            }}
-            className="
-              mt-8
-              flex
-              flex-wrap
-              gap-3
-            "
-          >
-
-            {/* ORDER NOW */}
-
-            <a
-              href="#order"
-              className="
-                group
-                flex
-                h-14
-                items-center
-                gap-3
-                rounded-full
-                bg-[#31929B]
-                px-7
-                text-sm
-                font-bold
-                uppercase
-                tracking-[0.08em]
-                text-[#071719]
-                shadow-[0_12px_40px_rgba(49,146,155,0.35)]
-                transition-all
-                duration-300
-                hover:-translate-y-1
-                hover:bg-[#43AEB8]
-                hover:shadow-[0_18px_50px_rgba(49,146,155,0.55)]
-              "
-            >
-
-              <span>
-                Order Now
-              </span>
-
-              <span className="
-                flex
-                h-8
-                w-8
-                items-center
-                justify-center
-                rounded-full
-                bg-[#071719]
-                text-white
-                transition-transform
-                duration-300
-                group-hover:translate-x-1
-              ">
-                →
-              </span>
-
-            </a>
-
-            {/* VIEW MENU */}
-
-            <a
-              href="#menu"
-              className="
-                flex
-                h-14
-                items-center
-                rounded-full
-                border
-                border-white/30
-                bg-black/20
-                px-7
-                text-sm
-                font-bold
-                uppercase
-                tracking-[0.08em]
-                text-white
-                backdrop-blur-md
-                transition-all
-                duration-300
-                hover:-translate-y-1
-                hover:border-white
-                hover:bg-white
-                hover:text-black
-              "
-            >
-              View Menu
-            </a>
-
-          </motion.div>
-
+          <div className="absolute inset-0 bg-black/20" />
         </div>
 
-      </div>
+        {/* CENTRE VIDEO */}
 
-      {/* ================================================= */}
-      {/* VIDEO INDICATORS */}
-      {/* ================================================= */}
+        <div className="absolute inset-y-0 left-1/2 z-[2] w-[48%] -translate-x-1/2 overflow-hidden bg-black">
+          <AnimatePresence mode="wait">
+            <motion.video
+              key={`desktop-${activeIndex}`}
+              ref={desktopVideoRef}
+              src={activeVideo.src}
+              autoPlay
+              muted
+              playsInline
+              preload="auto"
+              onEnded={nextVideo}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.7 }}
+              className="h-full w-full object-cover object-center"
+            />
+          </AnimatePresence>
 
-      <div className="
-        absolute
-        bottom-8
-        left-6
-        right-6
-        z-40
-        flex
-        items-end
-        justify-between
-        lg:left-8
-        lg:right-8
-      ">
+          <div className="pointer-events-none absolute inset-0 bg-black/10" />
 
-        {/* Scroll indicator */}
-
-        <div className="
-          hidden
-          flex-col
-          items-center
-          gap-3
-          sm:flex
-        ">
-
-          <span className="
-            text-[9px]
-            font-semibold
-            uppercase
-            tracking-[0.35em]
-            text-white/40
-          ">
-            Scroll to explore
-          </span>
-
-          <div className="
-            h-10
-            w-px
-            bg-white/30
-          " />
-
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/40 to-transparent" />
         </div>
 
-        {/* Six video indicators */}
+        {/* DESKTOP CONTENT */}
 
-        <div className="
-          ml-auto
-          flex
-          items-center
-          gap-3
-        ">
+        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-78px)] max-w-[1500px] items-center px-8 py-20 xl:px-16">
 
-          {heroVideos.map((_, index) => (
+          <div className="max-w-[620px]">
+
+            <motion.div
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+            >
+              <p className="mb-5 text-xs font-black uppercase tracking-[0.25em] text-white">
+                THE ONLY THING BETTER THAN
+              </p>
+
+              <h1 className="font-display text-7xl font-black uppercase leading-[0.84] tracking-[-0.045em] xl:text-[7.5rem]">
+                <span className="block text-[#31929B]">
+                  SHAWARMA
+                </span>
+
+                <span className="mt-2 block">
+                  IS MORE
+                </span>
+
+                <span className="block">
+                  SHAWARMA<span className="text-[#31929B]">.</span>
+                </span>
+              </h1>
+            </motion.div>
+
+            {/* BRAND VALUES */}
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.15 }}
+              className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#31929B] text-lg font-black">
+                  ✓
+                </div>
+
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#31929B]">
+                    100% HALAL
+                  </p>
+                  <p className="mt-0.5 text-xs text-white/65">
+                    Always
+                  </p>
+                </div>
+              </div>
+
+              <div className="hidden h-9 w-px bg-white/25 sm:block" />
+
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#31929B]/60 text-lg text-[#31929B]">
+                  ✦
+                </div>
+
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em]">
+                    AUTHENTIC SYRIAN
+                  </p>
+                  <p className="mt-0.5 text-xs text-white/65">
+                    Flavours &amp; tradition
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="mt-7 max-w-md text-base leading-7 text-white/75"
+            >
+              Freshly prepared and served with care in Greater Sudbury.
+            </motion.p>
+
+            {/* DESKTOP BUTTONS */}
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="mt-8 flex flex-wrap gap-3"
+            >
+              <a
+                href="#order"
+                className="inline-flex items-center justify-center rounded-full bg-[#31929B] px-8 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-xl transition duration-300 hover:-translate-y-1 hover:bg-[#287D85]"
+              >
+                ORDER NOW <span className="ml-3">→</span>
+              </a>
+
+              <a
+                href="#full-menu"
+                className="inline-flex items-center justify-center rounded-full bg-white px-8 py-4 text-sm font-bold uppercase tracking-wide text-[#111111] transition duration-300 hover:-translate-y-1 hover:bg-white/90"
+              >
+                VIEW MENU
+              </a>
+            </motion.div>
+
+          </div>
+        </div>
+
+        {/* DESKTOP VIDEO INDICATORS */}
+
+        <div className="absolute bottom-7 right-8 z-30 flex items-center gap-2 xl:right-12">
+          {mediaItems.map((_, index) => (
             <button
               key={index}
-              onClick={() => setActiveVideo(index)}
+              type="button"
+              onClick={() => setActiveIndex(index)}
               aria-label={`Show video ${index + 1}`}
-              className="
-                group
-                flex
-                items-center
-                gap-2
-              "
-            >
-
-              <span className={`
-                text-[9px]
-                font-bold
-                transition-colors
-                duration-300
-
-                ${
-                  activeVideo === index
-                    ? "text-white"
-                    : "text-white/35 group-hover:text-white/70"
-                }
-              `}>
-                {String(index + 1).padStart(2, "0")}
-              </span>
-
-              <span className={`
-                block
-                h-[2px]
-                rounded-full
-                transition-all
-                duration-500
-
-                ${
-                  activeVideo === index
-                    ? "w-12 bg-[#31929B]"
-                    : "w-4 bg-white/20"
-                }
-              `} />
-
-            </button>
+              aria-current={activeIndex === index}
+              className={`h-1.5 rounded-full transition-all duration-500 ${
+                activeIndex === index
+                  ? "w-10 bg-[#31929B]"
+                  : "w-2 bg-white/45 hover:bg-white/80"
+              }`}
+            />
           ))}
-
         </div>
-
       </div>
 
-    </section>
-  )
-}
+      {/* =========================================
+          MOBILE HERO
+      ========================================= */}
 
-export default Hero
+      <div className="relative overflow-hidden px-5 pb-8 pt-12 sm:px-8 sm:pt-16 lg:hidden">
+
+        {/* Subtle background glow */}
+
+        <div className="pointer-events-none absolute -right-24 top-20 h-72 w-72 rounded-full bg-[#087F87]/15 blur-[100px]" />
+
+        <div className="relative z-10 mx-auto max-w-xl">
+
+          {/* MOBILE HEADING */}
+
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+          >
+            <p className="mb-4 text-[10px] font-black uppercase tracking-[0.22em] text-white/85 sm:text-xs">
+              THE ONLY THING BETTER THAN
+            </p>
+
+            <h1 className="font-display text-[clamp(3.4rem,12vw,5.5rem)] font-black uppercase leading-[0.84] tracking-[-0.05em]">
+              <span className="block text-[#31929B]">
+                SHAWARMA
+              </span>
+
+              <span className="mt-1 block">
+                IS MORE
+              </span>
+
+              <span className="block">
+                SHAWARMA<span className="text-[#31929B]">.</span>
+              </span>
+            </h1>
+          </motion.div>
+
+          {/* MOBILE BRAND VALUES */}
+
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="mt-6 flex flex-wrap gap-x-5 gap-y-4"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#31929B] text-base font-black">
+                ✓
+              </div>
+
+              <div>
+                <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#31929B]">
+                  100% HALAL
+                </p>
+                <p className="text-xs text-white/60">Always</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-[#31929B]/60 text-[#31929B]">
+                ✦
+              </div>
+
+              <div>
+                <p className="text-[9px] font-black uppercase tracking-[0.15em]">
+                  AUTHENTIC SYRIAN
+                </p>
+                <p className="text-xs text-white/60">
+                  Flavours &amp; tradition
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mt-5 max-w-sm text-sm leading-6 text-white/70"
+          >
+            Freshly prepared and served with care in Greater Sudbury.
+          </motion.p>
+
+          {/* MOBILE BUTTONS */}
+
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.25 }}
+            className="mt-6 grid grid-cols-2 gap-3"
+          >
+            <a
+              href="#order"
+              className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#31929B] px-3 py-3 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-[#287D85]"
+            >
+              ORDER NOW <span>→</span>
+            </a>
+
+            <a
+              href="#full-menu"
+              className="flex min-h-12 items-center justify-center rounded-full bg-white px-3 py-3 text-xs font-bold uppercase tracking-wide text-[#111111] transition hover:bg-white/90"
+            >
+              VIEW MENU
+            </a>
+          </motion.div>
+
+          {/* MOBILE VIDEO CARD */}
+
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.35 }}
+            className="mt-9"
+          >
+            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl">
+
+              <div className="relative aspect-[16/10] w-full sm:aspect-[16/9]">
+                <AnimatePresence mode="wait">
+                  <motion.video
+                    key={`mobile-${activeIndex}`}
+                    ref={mobileVideoRef}
+                    src={activeVideo.src}
+                    autoPlay
+                    muted
+                    playsInline
+                    preload="auto"
+                    onEnded={nextVideo}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="absolute inset-0 h-full w-full object-cover object-center"
+                  />
+                </AnimatePresence>
+
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+
+                <div className="absolute bottom-4 left-4 text-[9px] font-bold uppercase tracking-[0.2em] text-white/90">
+                  Fresh from our kitchen
+                </div>
+
+                {/* MOBILE VIDEO INDICATORS */}
+
+                <div className="absolute bottom-4 right-4 z-10 flex items-center gap-2">
+                  {mediaItems.map((_, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => setActiveIndex(index)}
+                      aria-label={`Show video ${index + 1}`}
+                      aria-current={activeIndex === index}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${
+                        activeIndex === index
+                          ? "w-7 bg-[#31929B]"
+                          : "w-1.5 bg-white/60"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-3 flex items-center justify-between text-[9px] font-semibold uppercase tracking-[0.18em] text-white/40">
+              <span>Our food · Our passion</span>
+              <span>Damascus Shawarma</span>
+            </div>
+          </motion.div>
+
+        </div>
+      </div>
+
+      {/* BOTTOM TEAL EDGE */}
+
+      <div className="absolute bottom-0 left-0 right-0 z-30 h-1 bg-[#31929B]" />
+    </section>
+  );
+}
