@@ -381,7 +381,7 @@ function CateringSection() {
               <form
                 name="catering-request"
                 method="POST"
-                action="/?catering=success"
+                action="/catering-success"
                 data-netlify="true"
                 netlify-honeypot="bot-field"
                 className="grid gap-5 sm:grid-cols-2"

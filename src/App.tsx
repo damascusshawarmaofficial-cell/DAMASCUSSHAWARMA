@@ -14,6 +14,7 @@ import OrderSection from "./components/OrderSection"
 
 import OurStoryPage from "./pages/OurStoryPage"
 import StrawberryCupSection from "./components/StrawberryCupSection"
+import CateringSuccess from "./components/CateringSuccess"
 
 function HomePage() {
   return (
@@ -22,28 +23,17 @@ function HomePage() {
 
       <main>
         <LivingHero />
-
         <OrderSection />
-
         {/* <FeaturedMenu /> */}
-
         <MenuSection />
-
         <StorySection />
-
         <SignatureSection />
-
         <FoodVideoSection />
-
         <ReviewsSection />
-
         <CateringSection />
-
         <GallerySection />
         <StrawberryCupSection />
-
         {/* <LocationSection /> */}
-
         <Footer />
       </main>
     </>
@@ -54,11 +44,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Homepage */}
         <Route path="/" element={<HomePage />} />
-
-        {/* Our Story */}
         <Route path="/our-story" element={<OurStoryPage />} />
+        <Route path="/catering-success" element={<CateringSuccess />} />
       </Routes>
     </BrowserRouter>
   )
