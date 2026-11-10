@@ -475,7 +475,16 @@ function CateringSection() {
                     <option value="Other">Other</option>
                   </select>
                 </label>
-
+              <label className="grid gap-2 text-sm text-white/75">
+                  Estimated budget
+                  <input
+                    type="number"
+                    name="estimated-budget"
+                    min="1"
+                    className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-[#31929B]"
+                    placeholder="Approximate number"
+                  />
+                </label>
                 <label className="grid gap-2 text-sm text-white/75 sm:col-span-2">
                   Event details
                   <textarea
