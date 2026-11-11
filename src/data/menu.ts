@@ -40,6 +40,8 @@ import chickenonricefamily from "../assets/food/Menu/corf.jpeg";
 import chickenmandifamily from "../assets/food/Menu/cmf.png";
 import kebabonricefamily from "../assets/food/Menu/kebabfamily.png";
 import spinachpie from "../assets/food/Menu/sp.png";
+import chocolateBrownie from "../assets/food/Menu/brownie.png";
+import dubaiKunafaChocolate from "../assets/food/Menu/cb.png";
 
 export type MenuPrice = {
   regular?: string;
@@ -553,6 +555,30 @@ export const menuCategories: MenuCategory[] = [
         image: basbousa,
         vegetarian: true,
       },
+    {
+
+    id: "chocolate-brownie",
+        name: "Dubai Chocolate Brownie",
+        description:
+          "Rich, moist chocolate brownie topped with smooth chocolate and a sweet white chocolate drizzle.",
+        price: {
+          large: "$8.99",
+        },
+        image: chocolateBrownie,
+        vegetarian: true,
+      },
+      {
+        id: "dubai-kunafa-chocolate",
+        name: "Dubai Kunafa Chocolate Bar",
+        description:
+          "Premium dubai chocolate filled with crispy kunafa and rich pistachio cream.",
+        price: {
+          large: "$5.50",
+        },
+        image: dubaiKunafaChocolate,
+        vegetarian: true,
+      },
+
     ],
   },
     {
