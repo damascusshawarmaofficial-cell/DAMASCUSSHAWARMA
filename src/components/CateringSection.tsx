@@ -1,4 +1,5 @@
-import { useRef, useState } from "react"
+
+import { useRef, useState, type FormEvent } from "react"
 import { motion } from "motion/react"
 import bakeryVideo from "../assets/videos/catering.mp4"
 import foodTruckImage from "../assets/ft.jpeg"
@@ -22,9 +23,63 @@ function CateringSection() {
   const [progress, setProgress] = useState(0)
   const [showForm, setShowForm] = useState(false)
 
-  const wasSubmitted =
-    typeof window !== "undefined" &&
-    new URLSearchParams(window.location.search).get("catering") === "success"
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submissionStatus, setSubmissionStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle")
+  const [submissionError, setSubmissionError] = useState("")
+
+  // Formspree submission
+  const handleCateringSubmit = async (
+    event: FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault()
+
+    const form = event.currentTarget
+
+    setIsSubmitting(true)
+    setSubmissionStatus("idle")
+    setSubmissionError("")
+
+    try {
+      const response = await fetch(
+        "https://formspree.io/f/mzerbakp",
+        {
+          method: "POST",
+          body: new FormData(form),
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      )
+
+      if (!response.ok) {
+        const result = await response.json().catch(() => null)
+
+        const message = result?.errors
+          ?.map((item: { message: string }) => item.message)
+          .join(" ")
+
+        throw new Error(
+          message ||
+            "Your request could not be sent. Please try again."
+        )
+      }
+
+      setSubmissionStatus("success")
+      form.reset()
+    } catch (error) {
+      setSubmissionStatus("error")
+
+      setSubmissionError(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again."
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   const openForm = () => {
     setShowForm(true)
@@ -92,7 +147,9 @@ function CateringSection() {
     const video = videoRef.current
     if (!video || !video.duration) return
 
-    setProgress((video.currentTime / video.duration) * 100)
+    setProgress(
+      (video.currentTime / video.duration) * 100
+    )
   }
 
   const toggleFullscreen = () => {
@@ -113,6 +170,7 @@ function CateringSection() {
     >
       <div className="mx-auto max-w-7xl">
         <div className="grid overflow-hidden rounded-[2rem] bg-[#1A1A1A] md:grid-cols-2">
+
           {/* Catering video */}
           <motion.div
             initial={{ opacity: 0, scale: 1.03 }}
@@ -170,7 +228,9 @@ function CateringSection() {
                   <button
                     type="button"
                     onClick={togglePlay}
-                    aria-label={isPlaying ? "Pause video" : "Play video"}
+                    aria-label={
+                      isPlaying ? "Pause video" : "Play video"
+                    }
                     className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-md transition hover:bg-white/25 active:scale-95"
                   >
                     {isPlaying ? "Ⅱ" : "▶"}
@@ -179,7 +239,9 @@ function CateringSection() {
                   <button
                     type="button"
                     onClick={toggleMute}
-                    aria-label={isMuted ? "Turn sound on" : "Mute sound"}
+                    aria-label={
+                      isMuted ? "Turn sound on" : "Mute sound"
+                    }
                     className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-md transition hover:bg-white/25 active:scale-95"
                   >
                     {isMuted ? "🔇" : "🔊"}
@@ -226,7 +288,9 @@ function CateringSection() {
               <h2 className="mt-5 font-display text-4xl font-semibold leading-[1.05] tracking-[-0.03em] text-white sm:text-5xl lg:text-6xl">
                 Feed the
                 <br />
-                <span className="text-[#31929B]">whole crew.</span>
+                <span className="text-[#31929B]">
+                  whole crew.
+                </span>
               </h2>
 
               <p className="mt-6 max-w-lg text-sm leading-7 text-white/55 sm:mt-7 sm:text-base sm:leading-8">
@@ -242,7 +306,10 @@ function CateringSection() {
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: index * 0.05 }}
+                    transition={{
+                      duration: 0.4,
+                      delay: index * 0.05,
+                    }}
                     className="flex items-center gap-2 sm:gap-3"
                   >
                     <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#31929B]" />
@@ -281,10 +348,12 @@ function CateringSection() {
               <h3 className="mt-5 font-display text-4xl font-semibold leading-[1.05] tracking-[-0.03em] text-white sm:text-5xl lg:text-6xl">
                 Savoury favourites.
                 <br />
-                <span className="text-[#31929B]">Sweet treats.</span>
+                <span className="text-[#31929B]">
+                  Sweet treats.
+                </span>
               </h3>
 
-              <p className="mt-6 max-w-lg text-sm leading-7 text-white/55 sm:text-base sm:leading-8">
+              <p className="mt-6 max-w-lg text-sm leading-7 text-white/55 sm:mt-7 sm:text-base sm:leading-8">
                 Come hungry and enjoy your Damascus food truck favourites,
                 along with delicious specialty sweets from Sweets on the Go!
               </p>
@@ -321,6 +390,7 @@ function CateringSection() {
               alt="Damascus Shawarma food truck"
               className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
             />
+
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
 
             <div className="absolute bottom-6 left-6 sm:bottom-8 sm:left-8">
@@ -347,9 +417,11 @@ function CateringSection() {
                 <p className="font-heading text-[10px] font-bold uppercase tracking-[0.3em] text-[#31929B] sm:text-xs">
                   Tell us about your event
                 </p>
+
                 <h3 className="mt-3 font-display text-3xl font-semibold text-white sm:text-4xl">
                   Catering request
                 </h3>
+
                 <p className="mt-3 max-w-xl text-sm leading-6 text-white/55">
                   Share a few details and the Damascus team will get back to
                   you.
@@ -366,12 +438,15 @@ function CateringSection() {
               </button>
             </div>
 
-            {wasSubmitted ? (
+            {submissionStatus === "success" ? (
               <div
                 role="status"
                 className="rounded-2xl border border-[#31929B]/40 bg-[#31929B]/10 p-6 text-white"
               >
-                <p className="font-semibold">Thanks for your request!</p>
+                <p className="font-semibold">
+                  Thanks for your request!
+                </p>
+
                 <p className="mt-2 text-sm text-white/65">
                   Your message has been sent. The Damascus team will be in
                   touch.
@@ -379,26 +454,9 @@ function CateringSection() {
               </div>
             ) : (
               <form
-                name="catering-request"
-                method="POST"
-                action="/catering-success"
-                data-netlify="true"
-                netlify-honeypot="bot-field"
+                onSubmit={handleCateringSubmit}
                 className="grid gap-5 sm:grid-cols-2"
               >
-                <input
-                  type="hidden"
-                  name="form-name"
-                  value="catering-request"
-                />
-
-                <p className="hidden">
-                  <label>
-                    Leave this field empty:
-                    <input name="bot-field" />
-                  </label>
-                </p>
-
                 <label className="grid gap-2 text-sm text-white/75">
                   Your name *
                   <input
@@ -464,18 +522,22 @@ function CateringSection() {
                     <option value="" disabled>
                       Select an event type
                     </option>
+
                     {occasions.map((occasion) => (
                       <option key={occasion} value={occasion}>
                         {occasion}
                       </option>
                     ))}
+
                     <option value="Food truck event">
                       Food truck event
                     </option>
+
                     <option value="Other">Other</option>
                   </select>
                 </label>
-              <label className="grid gap-2 text-sm text-white/75">
+
+                <label className="grid gap-2 text-sm text-white/75">
                   Estimated budget
                   <input
                     type="number"
@@ -485,6 +547,7 @@ function CateringSection() {
                     placeholder="Approximate number"
                   />
                 </label>
+
                 <label className="grid gap-2 text-sm text-white/75 sm:col-span-2">
                   Event details
                   <textarea
@@ -498,13 +561,29 @@ function CateringSection() {
                 <div className="sm:col-span-2">
                   <button
                     type="submit"
-                    className="group inline-flex items-center gap-3 rounded-full bg-[#31929B] px-7 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#287D85]"
+                    disabled={isSubmitting}
+                    className="group inline-flex items-center gap-3 rounded-full bg-[#31929B] px-7 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#287D85] disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    Send catering request
-                    <span className="transition-transform group-hover:translate-x-1">
-                      →
-                    </span>
+                    {isSubmitting
+                      ? "Sending..."
+                      : "Send catering request"}
+
+                    {!isSubmitting && (
+                      <span className="transition-transform group-hover:translate-x-1">
+                        →
+                      </span>
+                    )}
                   </button>
+
+                  {submissionStatus === "error" && (
+                    <p
+                      role="alert"
+                      className="mt-3 text-sm text-red-400"
+                    >
+                      {submissionError}
+                    </p>
+                  )}
+
                   <p className="mt-3 text-xs text-white/40">
                     Your details will only be used to respond to your request.
                   </p>
