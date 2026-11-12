@@ -154,7 +154,7 @@ function Navbar() {
               Catering
             </NavItem>
 
-            <NavItem href="#contact">
+            <NavItem href="#visit-us">
               Locations
             </NavItem>
 
@@ -280,7 +280,7 @@ function Navbar() {
                 </MobileItem>
 
                 <MobileItem
-                  href="#contact"
+                  href="#locations"
                   onClick={() => setMobileOpen(false)}
                 >
                   Locations

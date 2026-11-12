@@ -217,8 +217,7 @@
                 VISIT US
             ===================================================== */}
 
-            <div>
-
+<div id="visit-us">
               <p className="mb-6 font-heading text-[10px] font-extrabold uppercase tracking-[0.3em] text-white/30">
                 Visit Us
               </p>
